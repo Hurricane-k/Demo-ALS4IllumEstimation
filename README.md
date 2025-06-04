@@ -58,3 +58,24 @@
    3. `-input_mode 2` means input choice ORGB / using only RGB images
 7. the demo dataset is the same as that in **fine-tuned C5 with different input choices**, check the details in Point #6 in the corresponding section.
 8. acknowledge [the public availability of the initial PCC model](https://github.com/shuwei666/Color-Constancy-PCC). This part is built upon the initial PCC model.
+
+### fin-tuned ucc with different input choice
+1. the configuration and platform are the same as the point #1 in **fine-tuned C5 with different input choices** and **fine-tuned PCC with different input choice**
+2. the demo dataset is the same as that in **fine-tuned C5 with different input choices**, check the details in Point #6 in the corresponding section.
+3. model training follows the code cell:
+   ```
+   cd ./ucc_13Spectral
+   python script_train.py
+   ```
+4. following the previous point (#3), `--use_spec` controls the input choices during model training
+   1. `--use_spec 1` means input choice DUAL / using both ALS information and RGB images
+   2. `--use_spec 0` means input choice ORGB / using only RGB images
+5. model testing following the code cell:
+   ```
+   cd ./ucc_13Spectral
+   python test.py --use_spec 1 --input_mode 0 --data_dir ./dataset/Dataset_Normal
+   ```
+6. following the previous point (#5), `--input_mode` controls the input choices during model testing
+   1. `--input_mode 0` means follows the input choice during model training
+   2. `--input_mode 1` means input choice OALS / tested using only ALS information
+   3. `--input_mode 2` means input choice ORGB / tested using only RGB images
