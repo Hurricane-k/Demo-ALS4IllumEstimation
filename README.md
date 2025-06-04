@@ -34,3 +34,27 @@
    3. `--use-spectral-input 2` means test using only RGB images (ORGB)
 6. the demo dataset is `Normal Dataset`: `./dataset/Dataset_Normal/numpy_data/*.npz` saves the RAW-RGB image and corresponding ALS information, and `./dataset/Dataset_Normal/numpy_labels/*.npy` saves the RGB illuminant color of scene. 
 7. acknowledge [the public availibility of the initial C5 model](https://github.com/mahmoudnafifi/C5), the project `C5_13Spectral` is built upon the initial C5 model.
+
+### fine-tuned PCC with different input choice
+1. the configuration and platform are the same as the point #1 in **fine-tuned C5 with different input choices**
+2. model training follows the code cell:
+   ```
+   cd ./PCC_13Spectral
+   python script_train.py
+   ```
+3. following the previous point (#2), `-mode` controls training input choices
+   1. `-mode semantic_spectral` means input choice DUAL / using both ALS information and RGB images
+   2. `-mode spectral` means input choice OALS / using only ALS information
+   3. `-mode semantic` means input choice ORGB / using only RGB images
+4. Before test your model, please make you can rename the model folder, `fold_0`, `fold_1`, and `fold_2`
+5. model testing follows the next code cell example:
+   ```
+   cd ./PCC_13Spectral
+   python test.py -input_mode 0 -data_path ./dataset/Dataset_Normal -mode spectral
+   ```
+6. follwing the previous point (#5), `-input_mode` exclusive to testing model, control testing input choices
+   1. `-input_mode 0` means the same as `-mode` input choice
+   2. `-input_mode 1` means input choice OALS / using only ALS information
+   3. `-input_mode 2` means input choice ORGB / using only RGB images
+7. the demo dataset is the same as that in **fine-tuned C5 with different input choices**, check the details in Point #6 in the corresponding section.
+8. acknowledge [the public availability of the initial PCC model](https://github.com/shuwei666/Color-Constancy-PCC). This part is built upon the initial PCC model.
