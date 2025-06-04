@@ -7,86 +7,6 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import pairwise_distances
-import json
-
-#%% load some data from json file list
-def get_data_sorted(lisScene, pathgenroot, suffix_file='_1x.json', key_json='WhitePoint', key_sub_json=None):
-
-    """ load json file
-
-    """
-
-    for idx, eachScene in enumerate(lisScene):
-        if pathgenroot != None:
-            file = os.path.join(pathgenroot,eachScene+suffix_file)
-        else:
-            file = eachScene
-
-        def extract_info_json(filejson,key_info,key_sub_json=None):
-            with open(filejson,'r') as f:
-                data = json.load(f)
-                if key_sub_json == None:
-                    data_target = data[key_info]
-                else:
-                    data_target = data[key_info][key_sub_json]
-            del f, data
-            return data_target
-        
-        data_fetch = np.array(extract_info_json(file,key_json,key_sub_json))
-
-        try:
-            arr_data[idx,:] = data_fetch.reshape(1,-1)
-        except:
-            arr_data = np.zeros((len(lisScene),data_fetch.shape[0]))
-            arr_data[idx,:] = data_fetch.reshape(1,-1)
-    
-    return arr_data
-
-
-#%% see two kinds of ALS as grey-scale image, calculate their similaiity
-def ssim_similarity(matrix1, matrix2):
-    # Ensure matrices are 2D and have the same shape
-    assert matrix1.shape == matrix2.shape, "Matrices must have the same shape"
-    
-    # Determine the data range based on the maximum value in the matrices
-    data_range = max(matrix1.max(), matrix2.max()) - min(matrix1.min(), matrix2.min())
-    
-    # Compute SSIM
-    similarity, _ = ssim(matrix1, matrix2, data_range=data_range, full=True)
-    return similarity
-
-
-#%% elbow method
-def elbow_method_show(arr_data, interval_num_cluster = 5, max_n_cluster=None):
-    """ elbow method for data
-
-    arr_data (np.ndarray): np.ndarray with the shape of (N,M)
-        N: the number of data
-        M: the dimension of data
-        e.g. one vector (r1, g1, b1, r2, g2, b2, ...), with N data
-
-    interval_num_cluster: the common difference of an arithmetic sequence
-
-    """
-    if max_n_cluster == None:
-        if arr_data.shape[0]//2 > 26:
-            lis_num_cluster = list(range(5,arr_data.shape[0]//2,interval_num_cluster))
-        else:
-            lis_num_cluster = list(range(2,27,2))
-    else:
-        lis_num_cluster = list(range(10,max_n_cluster,interval_num_cluster))
-
-    lis_distortion = []
-    for num_cluster in lis_num_cluster:
-        kmeans = KMeans(n_clusters=num_cluster,n_init='auto').fit(arr_data)
-        lis_distortion.append(kmeans.inertia_)
-        del kmeans
-
-    plt.plot(lis_num_cluster,lis_distortion)
-    plt.xlabel('num_cluster')
-    plt.ylabel('distortion')
-    plt.title('elbow method')
-    del lis_num_cluster, lis_distortion
 
 #%% n_cluster optimal for gap statistic
 def compute_gap_statistic(data, max_k=10, B=10):
@@ -139,7 +59,6 @@ def compute_gap_statistic(data, max_k=10, B=10):
 
     return gaps, optimal_k
 
-
 #%%
 def data_chosen_KMeans(arr_data, num_clusters=20):
     # select chosen points based on K-Means method
@@ -169,6 +88,13 @@ def data_chosen_KMeans(arr_data, num_clusters=20):
 
 ## calculate angular error between two array
 def calculate_angular_error(array1, array2):
+    """ angular error calculation
+
+    Args:
+        array1 (_np.ndarray_): _array includes RGB illuminant color_
+        array2 (_np.ndarray_): _array includes RGB illuminant color_
+
+    """
     # Ensure the arrays have the same shape
     assert array1.shape == array2.shape, "Arrays must have the same shape"
     
@@ -192,33 +118,3 @@ def calculate_angular_error(array1, array2):
     angular_errors_degrees = np.degrees(angular_errors)
     
     return angular_errors, angular_errors_degrees
-
-#%% calculate some statistic value
-def cal_trimean(data):
-    """_calculate tirmean_
-
-    Args:
-        data (_np.ndarray_): _all metrics_
-
-    Returns:
-        _trimean_: _trimean of input_
-    """
-
-    Q1 = np.percentile(data,25)
-    median = np.percentile(data,50)
-    Q3 = np.percentile(data,75)
-    trimean = (Q1 + 2*median + Q3)/4
-
-    return trimean
-
-def cal_bst25(data):
-    data_sorted = sorted(data)
-    return np.mean(data_sorted[:int(len(data_sorted)*0.25)])
-
-def cal_wst25(data):
-    data_sorted = sorted(data)
-    return np.mean(data_sorted[int(len(data_sorted)*0.75):])
-
-def cal_wst05(data):
-    data_sorted = sorted(data)
-    return np.mean(data_sorted[int(len(data_sorted)*0.95):])
