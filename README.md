@@ -1,3 +1,5 @@
+![](./CIC33_logo.png)
+
 <p align="center">
     <h1 align="center">
     Demo code: illuminant estimation using ALS information
