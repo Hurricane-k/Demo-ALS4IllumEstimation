@@ -2,7 +2,7 @@
 
 <p align="center">
     <h1 align="center">
-    Demo code: illuminant estimation using ALS information
+    Demo code: Integration of RGB Image and ALS for Color Constancy
     </h1>
 </p>
 
