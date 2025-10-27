@@ -6,6 +6,8 @@
     </h1>
 </p>
 
+***Ruikai He***, ***Minchen Wei***
+
 > *ALS information*: low-resolution multispectral data of scene illuminant
 
 ![](FigAbstract.png)
